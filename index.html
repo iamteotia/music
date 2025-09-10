@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Music Player - july.lol</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Dynamic Micro Dots Background -->
+    <canvas id="dotsCanvas"></canvas>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="terminal-header">
+                <span class="terminal-title">july.lol</span>
+            </div>
+        </header>
+
+        <!-- Music Player Section -->
+        <main>
+            <div class="music-player">
+                <div class="player-header">
+                    <h2>&gt; Music Player &lt;</h2>
+                </div>
+                
+                <!-- Song Info Display -->
+                <div class="song-info">
+                    <div class="song-title" id="songTitle">No track selected</div>
+                    <div class="song-artist" id="songArtist">Unknown Artist</div>
+                </div>
+
+                <!-- Album Art / Visualizer -->
+                <div class="album-art">
+                    <div class="visualizer">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <span class="time" id="currentTime">0:00</span>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                        <div class="progress-handle" id="progressHandle"></div>
+                    </div>
+                    <span class="time" id="totalTime">0:00</span>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+                    <button class="control-btn" id="shuffleBtn">⧢</button>
+                    <button class="control-btn" id="prevBtn">⏮</button>
+                    <button class="control-btn main-btn" id="playPauseBtn">▶</button>
+                    <button class="control-btn" id="nextBtn">⏭</button>
+                    <button class="control-btn" id="repeatBtn">🔁</button>
+                </div>
+
+                <!-- Volume Control -->
+                <div class="volume-control">
+                    <span>🔊</span>
+                    <div class="volume-bar">
+                        <div class="volume-progress" id="volumeProgress"></div>
+                        <div class="volume-handle" id="volumeHandle"></div>
+                    </div>
+                </div>
+
+                <!-- Playlist Input -->
+                <div class="playlist-section">
+                    <div class="input-group">
+                        <input type="text" id="songUrl" placeholder="Paste Spotify/MP3 URL here..." class="url-input">
+                        <button id="addSongBtn" class="add-btn">ADD</button>
+                    </div>
+                </div>
+
+                <!-- Playlist -->
+                <div class="playlist">
+                    <div class="playlist-header">
+                        <span>&gt; PLAYLIST &lt;</span>
+                    </div>
+                    <div class="playlist-items" id="playlistItems">
+                        <!-- Playlist items will be added here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="credits">iamteotia</div>
+        </footer>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
