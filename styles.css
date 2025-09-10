@@ -34,25 +34,6 @@ body {
     padding: 20px;
 }
 
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.terminal-header {
-    border: 2px solid #00ff7f;
-    padding: 15px;
-    background: rgba(0, 255, 127, 0.1);
-    backdrop-filter: blur(10px);
-}
-
-.terminal-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-shadow: 0 0 10px #00ff7f;
-}
-
 /* Main Content */
 main {
     flex: 1;
