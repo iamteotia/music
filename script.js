@@ -419,3 +419,4 @@ const defaultSong = {
 playlist.push(defaultSong);
 loadSong(0);
 renderPlaylist();
+ 
