@@ -365,11 +365,28 @@ progressBar.addEventListener('click', (e) => {
 });
 
 // Volume bar interaction
-volumeBar.addEventListener('click', (e) => {
+let isVolumeDragging = false;
+
+function setVolume(e) {
     const rect = volumeBar.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
     currentVolume = Math.max(0, Math.min(1, percent));
     updateVolume();
+}
+
+volumeBar.addEventListener('mousedown', (e) => {
+    isVolumeDragging = true;
+    setVolume(e);
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (isVolumeDragging) {
+        setVolume(e);
+    }
+});
+
+window.addEventListener('mouseup', () => {
+    isVolumeDragging = false;
 });
 
 // Audio events
@@ -419,4 +436,3 @@ const defaultSong = {
 playlist.push(defaultSong);
 loadSong(0);
 renderPlaylist();
- 
