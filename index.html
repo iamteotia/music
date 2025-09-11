@@ -28,12 +28,8 @@
 
                 <!-- Album Art / Visualizer -->
                 <div class="album-art">
-                    <div class="visualizer">
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
+                    <div class="visualizer" id="visualizer">
+                        <canvas id="visualizerCanvas"></canvas>
                     </div>
                 </div>
 
@@ -65,10 +61,19 @@
                     </div>
                 </div>
 
-                <!-- Playlist Input -->
+                <!-- Search Bar -->
+                <div class="search-section">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" placeholder="Search your music..." class="search-input">
+                        <button id="searchBtn" class="search-btn">🔍</button>
+                    </div>
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+
+                <!-- Manual URL Input -->
                 <div class="playlist-section">
                     <div class="input-group">
-                        <input type="text" id="songUrl" placeholder="Paste Spotify/MP3 URL here..." class="url-input">
+                        <input type="text" id="songUrl" placeholder="Or paste direct MP3 URL here..." class="url-input">
                         <button id="addSongBtn" class="add-btn">ADD</button>
                     </div>
                 </div>
@@ -92,7 +97,7 @@
     </div>
 
     <!-- Hidden Audio Element -->
-    <audio id="audioPlayer" preload="metadata"></audio>
+    <audio id="audioPlayer" preload="metadata" crossorigin="anonymous"></audio>
 
     <script src="script.js"></script>
 </body>
