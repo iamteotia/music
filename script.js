@@ -194,6 +194,7 @@ function loadSong(index) {
 function playPause() {
     if (playlist.length === 0) return;
     
+    // The AudioContext must be resumed after a user gesture
     if (audioContext.state === 'suspended') {
         audioContext.resume();
     }
@@ -249,9 +250,15 @@ function toggleRepeat() {
     repeatMode = (repeatMode + 1) % 3;
     repeatBtn.classList.toggle('active', repeatMode > 0);
     
-    const repeatSymbols = ['🔁', '🔂', '🔂'];
+    const repeatSymbols = ['🔁', '🔁', '🔂']; // Standard repeat, repeat all, repeat one
     repeatBtn.textContent = repeatSymbols[repeatMode];
+    if (repeatMode > 0) {
+        repeatBtn.style.fontSize = '1.5em'; // Make single repeat icon bigger
+    } else {
+        repeatBtn.style.fontSize = '1.2em';
+    }
 }
+
 
 function addSong() {
     const url = songUrl.value.trim();
@@ -265,7 +272,7 @@ function addSong() {
     const urlParts = url.split('/');
     const filename = urlParts[urlParts.length - 1];
     if (filename.includes('.')) {
-        const nameWithoutExt = filename.split('.')[0];
+        const nameWithoutExt = filename.split('.').slice(0, -1).join('.');
         const decoded = decodeURIComponent(nameWithoutExt);
         
         // Try to split artist and title
@@ -297,22 +304,26 @@ function addSong() {
 function removeSong(index) {
     playlist.splice(index, 1);
     
-    if (currentSongIndex >= index && currentSongIndex > 0) {
+    if (index === currentSongIndex) {
+        if (playlist.length === 0) {
+            audioPlayer.src = '';
+            songTitle.textContent = 'No track selected';
+            songArtist.textContent = 'Unknown Artist';
+            playPauseBtn.textContent = '▶';
+            isPlaying = false;
+        } else {
+            // If the deleted song was the current one, load the next available song
+            currentSongIndex = Math.min(index, playlist.length - 1);
+            loadSong(currentSongIndex);
+        }
+    } else if (currentSongIndex > index) {
+        // Adjust index if a song before the current one was removed
         currentSongIndex--;
     }
     
     renderPlaylist();
-    
-    if (playlist.length === 0) {
-        audioPlayer.pause();
-        songTitle.textContent = 'No track selected';
-        songArtist.textContent = 'Unknown Artist';
-        playPauseBtn.textContent = '▶';
-        isPlaying = false;
-    } else if (index === currentSongIndex) {
-        loadSong(currentSongIndex);
-    }
 }
+
 
 function renderPlaylist() {
     playlistItems.innerHTML = '';
@@ -320,12 +331,6 @@ function renderPlaylist() {
     playlist.forEach((song, index) => {
         const item = document.createElement('div');
         item.className = `playlist-item ${index === currentSongIndex ? 'active' : ''}`;
-        item.onclick = () => {
-            loadSong(index);
-            if (isPlaying) {
-                audioPlayer.play();
-            }
-        };
         
         item.innerHTML = `
             <div class="play-icon">${index === currentSongIndex && isPlaying ? '♪' : '♫'}</div>
@@ -333,8 +338,23 @@ function renderPlaylist() {
                 <div class="song-name">${song.title}</div>
                 <div class="artist-name">${song.artist}</div>
             </div>
-            <button class="remove-btn" onclick="event.stopPropagation(); removeSong(${index})">✕</button>
+            <button class="remove-btn">✕</button>
         `;
+
+        item.querySelector('.song-details').onclick = () => {
+            const wasPlaying = isPlaying;
+            loadSong(index);
+            if (wasPlaying) {
+                audioPlayer.play();
+            } else {
+                playPause();
+            }
+        };
+
+        item.querySelector('.remove-btn').onclick = (e) => {
+            e.stopPropagation(); 
+            removeSong(index);
+        };
         
         playlistItems.appendChild(item);
     });
@@ -355,39 +375,41 @@ songUrl.addEventListener('keypress', (e) => {
     }
 });
 
+// --- FIX: Combined mouse and touch events for sliders ---
+
 // Progress bar interaction
-progressBar.addEventListener('click', (e) => {
+let isProgressDragging = false;
+function setProgress(e) {
     if (audioPlayer.duration) {
         const rect = progressBar.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+        const clientX = e.clientX || e.touches[0].clientX;
+        const percent = (clientX - rect.left) / rect.width;
         audioPlayer.currentTime = percent * audioPlayer.duration;
     }
-});
+}
+progressBar.addEventListener('mousedown', (e) => { isProgressDragging = true; setProgress(e); });
+progressBar.addEventListener('touchstart', (e) => { isProgressDragging = true; setProgress(e); });
+window.addEventListener('mousemove', (e) => { if (isProgressDragging) setProgress(e); });
+window.addEventListener('touchmove', (e) => { if (isProgressDragging) setProgress(e); });
+window.addEventListener('mouseup', () => { isProgressDragging = false; });
+window.addEventListener('touchend', () => { isProgressDragging = false; });
+
 
 // Volume bar interaction
 let isVolumeDragging = false;
-
 function setVolume(e) {
     const rect = volumeBar.getBoundingClientRect();
-    const percent = (e.clientX - rect.left) / rect.width;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const percent = (clientX - rect.left) / rect.width;
     currentVolume = Math.max(0, Math.min(1, percent));
     updateVolume();
 }
-
-volumeBar.addEventListener('mousedown', (e) => {
-    isVolumeDragging = true;
-    setVolume(e);
-});
-
-window.addEventListener('mousemove', (e) => {
-    if (isVolumeDragging) {
-        setVolume(e);
-    }
-});
-
-window.addEventListener('mouseup', () => {
-    isVolumeDragging = false;
-});
+volumeBar.addEventListener('mousedown', (e) => { isVolumeDragging = true; setVolume(e); });
+volumeBar.addEventListener('touchstart', (e) => { isVolumeDragging = true; setVolume(e); });
+window.addEventListener('mousemove', (e) => { if (isVolumeDragging) setVolume(e); });
+window.addEventListener('touchmove', (e) => { if (isVolumeDragging) setVolume(e); });
+window.addEventListener('mouseup', () => { isVolumeDragging = false; });
+window.addEventListener('touchend', () => { isVolumeDragging = false; });
 
 // Audio events
 audioPlayer.addEventListener('timeupdate', updateProgress);
@@ -416,21 +438,26 @@ audioPlayer.addEventListener('play', () => {
     if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume();
     }
+    isPlaying = true;
+    renderPlaylist();
     drawVisualizer();
 });
 
 audioPlayer.addEventListener('pause', () => {
     isPlaying = false;
+    renderPlaylist();
 });
 
 // Initialize volume
 updateVolume();
 
-// Add default song
+// --- FIX: Using a reliable, CORS-friendly audio link ---
+// The original link was likely expired or blocked by browser security (CORS).
+// This one is from a sample file website and should work reliably.
 const defaultSong = {
-    title: 'Jaatta Ka Chhora',
-    artist: 'Mika Singh',
-    url: 'https://p320.djpunjab.is/data/320/2408/25456/Jaatta%20Ka%20Chhora%20-%20Mika%20Singh.mp3'
+    title: 'Lofi Chill',
+    artist: 'Various Artists',
+    url: 'https://filesamples.com/samples/audio/mp3/sample4.mp3'
 };
 
 playlist.push(defaultSong);
