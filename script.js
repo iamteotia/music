@@ -30,8 +30,6 @@ const volumeBar = document.getElementById('volumeBar');
 const songUrl = document.getElementById('songUrl');
 const addSongBtn = document.getElementById('addSongBtn');
 const playlistItems = document.getElementById('playlistItems');
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
 const visualizerCanvas = document.getElementById('visualizer');
 const dotsCanvas = document.getElementById('dotsCanvas');
 
@@ -342,43 +340,6 @@ function renderPlaylist() {
     });
 }
 
-function searchMusic() {
-    const query = searchInput.value.trim().toLowerCase();
-    if (!query) {
-        renderPlaylist();
-        return;
-    }
-    
-    const filteredPlaylist = playlist.filter(song => 
-        song.title.toLowerCase().includes(query) || 
-        song.artist.toLowerCase().includes(query)
-    );
-    
-    playlistItems.innerHTML = '';
-    filteredPlaylist.forEach((song, index) => {
-        const originalIndex = playlist.indexOf(song);
-        const item = document.createElement('div');
-        item.className = `playlist-item ${originalIndex === currentSongIndex ? 'active' : ''}`;
-        item.onclick = () => {
-            loadSong(originalIndex);
-            if (isPlaying) {
-                audioPlayer.play();
-            }
-        };
-        
-        item.innerHTML = `
-            <div class="play-icon">${originalIndex === currentSongIndex && isPlaying ? '♪' : '♫'}</div>
-            <div class="song-details">
-                <div class="song-name">${song.title}</div>
-                <div class="artist-name">${song.artist}</div>
-            </div>
-            <button class="remove-btn" onclick="event.stopPropagation(); removeSong(${originalIndex})">✕</button>
-        `;
-        
-        playlistItems.appendChild(item);
-    });
-}
-
 // Event Listeners
 playPauseBtn.addEventListener('click', playPause);
 nextBtn.addEventListener('click', nextSong);
@@ -386,14 +347,6 @@ prevBtn.addEventListener('click', prevSong);
 shuffleBtn.addEventListener('click', toggleShuffle);
 repeatBtn.addEventListener('click', toggleRepeat);
 addSongBtn.addEventListener('click', addSong);
-searchBtn.addEventListener('click', searchMusic);
-
-// Search input enter key
-searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        searchMusic();
-    }
-});
 
 // URL input enter key
 songUrl.addEventListener('keypress', (e) => {
