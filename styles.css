@@ -234,47 +234,6 @@ main {
     cursor: grabbing;
 }
 
-/* Search Section */
-.search-section {
-    margin-bottom: 20px;
-}
-
-.search-group {
-    display: flex;
-    gap: 10px;
-}
-
-.search-input {
-    flex: 1;
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid #00ff41;
-    color: #00ff41;
-    padding: 10px;
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: 0.9em;
-}
-
-.search-input::placeholder {
-    color: #888;
-}
-
-.search-btn {
-    background: #00ff41;
-    color: #000;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: all 0.3s ease;
-}
-
-.search-btn:hover {
-    background: #00cc33;
-    box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
-}
-
 /* Playlist Input */
 .playlist-section {
     margin-bottom: 20px;
@@ -398,6 +357,10 @@ footer {
     padding: 20px;
     font-size: 0.8em;
     color: #888;
+}
+
+.credits {
+    color: #00ff41;
 }
 
 /* Responsive Design */
